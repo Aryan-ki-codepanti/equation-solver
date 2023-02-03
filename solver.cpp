@@ -13,6 +13,21 @@ void displayV(vector<vector<int>> v)
     }
 }
 
+class SolutionError
+{
+    string message;
+
+public:
+    SolutionError(string s)
+    {
+        message = s;
+    }
+    void display()
+    {
+        cout << message << endl;
+    }
+};
+
 class Solver
 {
 
@@ -21,9 +36,9 @@ class Solver
     vector<int> solutions;
 
 public:
-    static vector<int> multiply(vector<vector<int>> A, vector<int> B)
+    static vector<float> multiply(vector<vector<int>> A, vector<int> B)
     {
-        vector<int> res;
+        vector<float> res;
 
         int s;
         for (int row = 0; row < A.size(); row++)
@@ -35,7 +50,13 @@ public:
         }
         return res;
     }
-
+    static bool checkZeroMatrix(vector<float> M)
+    {
+        for (auto &x : M)
+            if (x != 0)
+                return false;
+        return true;
+    }
     static vector<vector<int>> transpose(vector<vector<int>> M)
     {
         int n = M.size();
@@ -102,18 +123,23 @@ public:
 
     void solve()
     {
-        vector<vector<int>> adj = get_adjoint();
-
-        cout << "ADJ" << endl;
-        displayV(adj);
-
         int det = determinant(coefficients);
-        cout << "det " << det << endl;
+        vector<vector<int>> adj = get_adjoint();
+        vector<float> res = multiply(adj, solutions);
 
-        vector<int> res = multiply(adj, solutions);
+        if (det == 0)
+        {
+            if (checkZeroMatrix(res))
+                throw SolutionError("Infinite solutions");
+            else
+                throw SolutionError("No solutions");
+        }
+
         for (auto &&i : res)
-            i /= det;
+            i /= (float)(det);
 
+        cout << endl
+             << "----------Solutions------" << endl;
         for (int i = 0; i < res.size(); i++)
             cout << "x" << i << " = " << res[i] << endl;
     }
@@ -148,6 +174,7 @@ public:
     }
     void display_system()
     {
+        cout << "-----------System----------" << endl;
         int x;
         for (int i = 0; i < n; i++)
         {
@@ -163,21 +190,15 @@ public:
         }
     }
 };
+
 /*
-6 1 1 2
-4 -2 5 2
-2 8 7 0
-
-1 9 3 2
-2 5 4 2
-3 7 8 0
-
 actual
-
+3
 2 5 2 -38
 3 -2 4 17
 -6 1 -7 -12
 
+3
 3 1 1 1
 2 0 2 0
 5 1 2 2
@@ -185,14 +206,19 @@ actual
 
 int main()
 {
-
-    int n;
-    // vector<vector<int>> res(n, vector<int>(n, 0));
-    // displayV(res);
-    cin >> n;
-    Solver s(n);
-    s.system_input();
-    s.display_system();
-    s.solve();
+    try
+    {
+        cout << "Enter number of equations / variables: ";
+        int n;
+        cin >> n;
+        Solver s(n);
+        s.system_input();
+        s.display_system();
+        s.solve();
+    }
+    catch (SolutionError err)
+    {
+        err.display();
+    }
     return 0;
 }
