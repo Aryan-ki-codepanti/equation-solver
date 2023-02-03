@@ -40,13 +40,12 @@ public:
     {
         int n = M.size();
         vector<vector<int>> res(n, vector<int>(n, 0));
-        // int n = M.size();
-        // for (int i = 0; i < n; i++)
-        // {
-        //     for (int j = 0; j < n; j++)
-        //     {
-        //     }
-        // }
+
+        for (int i = 0; i < n; i++)
+        {
+            for (int j = 0; j < n; j++)
+                res[i][j] = M[j][i];
+        }
 
         return res;
     }
@@ -130,7 +129,7 @@ public:
             adj.push_back(v);
         }
 
-        return adj;
+        return transpose(adj);
     }
 
     void system_input()
@@ -187,13 +186,13 @@ actual
 int main()
 {
 
-    int n = 3;
-    vector<vector<int>> res(n, vector<int>(n, 0));
-    displayV(res);
-
-    // Solver s(n);
-    // s.system_input();
-    // s.display_system();
-    // s.solve();
+    int n;
+    // vector<vector<int>> res(n, vector<int>(n, 0));
+    // displayV(res);
+    cin >> n;
+    Solver s(n);
+    s.system_input();
+    s.display_system();
+    s.solve();
     return 0;
 }
